@@ -6,12 +6,12 @@ then
 	exit 1
 fi 
 
-pr=`curl -c cook.txt  -s -k -L -d "IDToken1=$1&IDToken2=$2&IDToken3=$2&goto=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginSuccess&gotoOnFail=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginError&old-token=&org=customer" https://login.yota.ru/UI/Login | grep "Yota - Р’С…РѕРґ РІ Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚/Р РµРіРёСЃС‚СЂР°С†РёСЏ"`
+pr=`wget --save-cookies cook.txt -q -O - --post-data="IDToken1=$1&IDToken2=$2&IDToken3=$2&goto=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginSuccess&gotoOnFail=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginError&old-token=&org=customer" -q https://login.yota.ru/UI/Login | grep "Yota - Р’С…РѕРґ РІ Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚/Р РµРіРёСЃС‚СЂР°С†РёСЏ"`
 
 if [ ${#pr} -eq 0 ]
 then
  echo "Login OK"
- pr=`curl -b cook.txt  -s -k -L https://my.yota.ru/selfcare/devices | grep "\"product\" va"`
+ pr=`wget --save-cookies cook.txt --load-cookies cook.txt -q -O -  https://my.yota.ru/selfcare/devices | grep "\"product\" va"`
 
  if [ ${#pr} -eq 0 ]
   then
@@ -26,7 +26,7 @@ else
 fi
 
 echo "Personal cabinet OK"
-x=`curl -b cook.txt  -s -k -L https://my.yota.ru/selfcare/devices`
+x=`wget --save-cookies cook.txt --load-cookies cook.txt -q -O - https://my.yota.ru/selfcare/devices`
 # x=$(cat $1)
 
 y=${x#*\"steps\":}
@@ -90,14 +90,14 @@ done
 echo "*) TARIF=\"$pd\";;">>n_yota.sh
 echo "esac" >> n_yota.sh
 
-echo "pr=\`curl -c cook.txt  -s -k -L -d \"IDToken1=\$1&IDToken2=\$2&IDToken3=\$2&goto=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginSuccess&gotoOnFail=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginError&old-token=&org=customer\" https://login.yota.ru/UI/Login | grep \"Yota - Р’С…РѕРґ РІ Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚/Р РµРіРёСЃС‚СЂР°С†РёСЏ\"\`">>n_yota.sh
+echo "pr=\`wget --save-cookies cook.txt --load-cookies cook.txt -q -O - --post-data \"IDToken1=\$1&IDToken2=\$2&IDToken3=\$2&goto=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginSuccess&gotoOnFail=https%3A%2F%2Fmy.yota.ru%3A443%2Fselfcare%2FloginError&old-token=&org=customer\" https://login.yota.ru/UI/Login | grep \"Yota - Р’С…РѕРґ РІ Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚/Р РµРіРёСЃС‚СЂР°С†РёСЏ\"\`">>n_yota.sh
 
 echo "" >> n_yota.sh 
 
 echo "if [ \${#pr} -eq 0 ]" >> n_yota.sh 
 
 echo "then" >> n_yota.sh 
-echo "pr=\`curl -b cook.txt  -s -k -L https://my.yota.ru/selfcare/devices | grep \"\\\"product\\\" va\"\`" >> n_yota.sh 
+echo "pr=\`wget --save-cookies cook.txt --load-cookies cook.txt -q -O - https://my.yota.ru/selfcare/devices | grep \"\\\"product\\\" va\"\`" >> n_yota.sh 
 echo " if [ \${#pr} -eq 0 ]" >> n_yota.sh 
 echo " then" >> n_yota.sh 
 echo "echo \"Personal cabinet error!!!\"" >> n_yota.sh 
@@ -113,7 +113,7 @@ pr=\${pr#*value=\\\"}
 pr=\${pr%\\\" />}
 
 OCODE=\$TARIF" >> n_yota.sh
-echo  "od=\`curl -b cook.txt  -s -k -L -d \"product=\$pr&offerCode=\$OCODE&homeOfferCode=&areOffersAvailable=false&period=&status=custom&autoprolong=0&isSlot=false&resourceId=&currentDevice=1&username=&isDisablingAutoprolong=false\" https://my.yota.ru/selfcare/devices/changeOffer | grep \"offerDisabled\"\`">>n_yota.sh
+echo  "od=\`wget --save-cookies cook.txt --load-cookies cook.txt -q -O - --post-data \"product=\$pr&offerCode=\$OCODE&homeOfferCode=&areOffersAvailable=false&period=&status=custom&autoprolong=0&isSlot=false&resourceId=&currentDevice=1&username=&isDisablingAutoprolong=false\" https://my.yota.ru/selfcare/devices/changeOffer | grep \"offerDisabled\"\`">>n_yota.sh
 
 echo "
 if [ \${#od} -eq 0 ]
